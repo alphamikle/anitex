@@ -1,26 +1,3 @@
-/*
- * MIT License
- *
- * Copyright (c) 2020 Mikhail Alpha <alphamikle@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 import 'dart:math';
 
 import 'package:anitex/anitex.dart';
@@ -56,10 +33,16 @@ const _counters = [
   21,
   22,
   1375,
-  1375,
+  2184,
+  21849,
+  35410,
+  35411,
 ];
 
 const _titles = [
+  'Animated text Demo',
+  'Animated text Demo',
+  'Animated text Demo',
   'Animated text Demo',
   'Animated text Demo',
   'Animated text Demo',
@@ -69,6 +52,9 @@ const _titles = [
 ];
 
 const _smallTitles = [
+  'You have pushed the button this many times:',
+  'You have pushed the button this many times:',
+  'You have pushed the button this many times:',
   'You have pushed the button this many times:',
   'You have pushed the button this many times:',
   'You have pushed the button this many times:',
@@ -103,13 +89,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _run() async {
-    await _wait(600);
+    await _wait(5000);
     for (int i = 0; i < _counters.length; i++) {
       await _wait(Random().nextInt(600) + 400);
       setState(() {
         _counter = _counters[i];
       });
-      if (_counter > 22) {
+      if (_counter > 35410) {
         setState(() {
           _title = _titles[i];
         });
@@ -253,6 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
           _title,
           style: Theme.of(context).textTheme.headline6.copyWith(color: Colors.white),
           duration: const Duration(seconds: 1),
+          reversed: true,
         ),
       ),
       body: Center(

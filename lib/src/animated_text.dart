@@ -30,18 +30,13 @@ import 'animated_token.dart';
 import 'direction.dart';
 import 'utils.dart';
 
-const Map<int, Direction> _compareDirections = {
-  -1: Direction.bottom,
-  0: Direction.none,
-  1: Direction.top,
-};
-
 class AnimatedText extends StatefulWidget {
   const AnimatedText(
     this.text, {
     Key key,
     this.style,
     this.duration = const Duration(milliseconds: 300),
+    this.reversed = false,
   })  : assert(duration != null),
         assert(text != null),
         super(key: key);
@@ -49,6 +44,7 @@ class AnimatedText extends StatefulWidget {
   final String text;
   final TextStyle style;
   final Duration duration;
+  final bool reversed;
 
   @override
   _AnimatedTextState createState() {
@@ -65,6 +61,12 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   double _prevTotalWidth = 0;
   Tween<double> _totalWidthTween = Tween(begin: 0, end: 0);
   Tween<double> _totalHeightTween = Tween(begin: 0, end: 0);
+
+  Map<int, Direction> get _directions => {
+        -1: widget.reversed ? Direction.top : Direction.bottom,
+        0: Direction.none,
+        1: widget.reversed ? Direction.bottom : Direction.top,
+      };
 
   void _initTokens() {
     _prevTokens.clear();
@@ -114,7 +116,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     for (int i = 0; i < longestTokens.length; i++) {
       final String token = _tokens.tryElementAt(i) ?? '';
       final String prevToken = _prevTokens.tryElementAt(i) ?? '';
-      final Direction direction = _compareDirections[token.compareTo(prevToken)];
+      final Direction direction = _directions[token.compareTo(prevToken)];
       String top;
       String center;
       String bottom;
