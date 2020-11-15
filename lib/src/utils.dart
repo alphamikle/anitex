@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-getTextWidgetSize(String text, TextStyle style, {double minWidth = 0, double maxWidth = double.infinity}) {
+Size getTextWidgetSize(String text, TextStyle style, {double minWidth = 0, double maxWidth = double.infinity}) {
   final TextPainter textPainter = TextPainter(
     text: TextSpan(text: text, style: style),
     maxLines: 1,

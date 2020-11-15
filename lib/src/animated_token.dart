@@ -28,6 +28,13 @@ import 'package:flutter/rendering.dart';
 
 import 'direction.dart';
 
+/// Describes a one cell of animated text:
+/// We change "100" to "250"
+/// Then, we have 3 animated tokens in not reversed flow:
+///  1th  2th 3th
+/// | 2 | 5 | _ |
+/// | 1 | 0 | 0 |
+/// | _ | _ | _ |
 class AnimatedToken {
   AnimatedToken({
     @required this.top,
@@ -43,13 +50,31 @@ class AnimatedToken {
     this.axisXTween,
   });
 
+  /// | top |
+  /// | center |
+  /// | bottom |
   final String top;
+
+  /// | top |
+  /// | center |
+  /// | bottom |
   final String center;
+
+  /// | top |
+  /// | center |
+  /// | bottom |
   final String bottom;
+
+  /// Describes in which direction this token will move
   final Direction direction;
 
+  /// Size of top letter
   final Size topSize;
+
+  /// Size of center letter
   final Size centerSize;
+
+  /// Size of bottom letter
   final Size bottomSize;
 
   /// Animation in Y axis for new letter

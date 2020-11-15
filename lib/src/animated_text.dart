@@ -30,6 +30,7 @@ import 'animated_token.dart';
 import 'direction.dart';
 import 'utils.dart';
 
+/// Animated text widget
 class AnimatedText extends StatefulWidget {
   const AnimatedText(
     this.text, {
@@ -42,8 +43,26 @@ class AnimatedText extends StatefulWidget {
         super(key: key);
 
   final String text;
+
+  /// If non-null, the style to use for this text.
+  /// If the style's "inherit" property is true, the style will be merged with
+  /// the closest enclosing [DefaultTextStyle]. Otherwise, the style will
+  /// replace the closest enclosing [DefaultTextStyle].
   final TextStyle style;
+
+  /// The duration over which to animate the parameters of this container.
   final Duration duration;
+
+  /// If [reversed] is true, then letter, which was greater in [letter.compareTo(oldLetter)]
+  /// will be at bottom, if false - at top.
+  /// [reversed] is false
+  /// 0       _
+  /// 1   ->  0
+  /// _       1
+  /// [reversed] is true
+  /// 1       _
+  /// 0   ->  1
+  /// _       0
   final bool reversed;
 
   @override
@@ -210,7 +229,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   }
 
   Text _buildToken(String token) {
-    return Text(token, style: widget.style, maxLines: 1);
+    return Text(token, style: widget.style ?? DefaultTextStyle.of(context), maxLines: 1);
   }
 
   List<Widget> _buildSpans() {
