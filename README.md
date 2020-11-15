@@ -35,4 +35,9 @@ line, and it is also desirable to explicitly specify the text styles
     );
   }
 ```
-[![Anitex demo](https://img.youtube.com/vi/hFkvllYtd9M/0.jpg)](https://www.youtube.com/watch?v=hFkvllYtd9M)
+
+Video available on YouTube:
+
+<a href="https://www.youtube.com/watch?v=hFkvllYtd9M" target="_blank">
+  <img src="https://github.com/alphamikle/anitex/raw/master/anitex_demo.gif" width="400">
+</a>
