@@ -38,4 +38,4 @@ line, and it is also desirable to explicitly specify the text styles
 
 Video available on YouTube:
 
-<img src="https://github.com/alphamikle/anitex/raw/master/anitex_demo.gif" width="400">
+<img src="https://github.com/alphamikle/anitex/raw/master/demo.gif" width="400">
