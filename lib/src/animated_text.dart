@@ -23,6 +23,7 @@
  */
 
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
@@ -36,12 +37,18 @@ class AnimatedText extends StatefulWidget {
     this.text, {
     Key key,
     this.style,
-    this.duration = const Duration(milliseconds: 300),
+    this.duration = const Duration(milliseconds: 350),
     this.reversed = false,
+    this.positionCurve = Curves.decelerate,
+    this.opacityToCurve = Curves.easeInQuart,
+    this.opacityFromCurve = Curves.easeOutQuart,
+    this.useOpacity = true,
   })  : assert(duration != null),
         assert(text != null),
+        assert(positionCurve != null && opacityFromCurve != null && opacityToCurve != null),
         super(key: key);
 
+  /// Text, which will we printed
   final String text;
 
   /// If non-null, the style to use for this text.
@@ -65,6 +72,18 @@ class AnimatedText extends StatefulWidget {
   /// _       0
   final bool reversed;
 
+  /// Curve, which describes how is switching a tokens in the words
+  final Curve positionCurve;
+
+  /// Curve, which describes how is changing opacity of new tokens on their switching
+  final Curve opacityToCurve;
+
+  /// Curve, which describes how is changing opacity of old tokens on their switching
+  final Curve opacityFromCurve;
+
+  /// Use opacity while tokens switching
+  final bool useOpacity;
+
   @override
   _AnimatedTextState createState() {
     return _AnimatedTextState();
@@ -75,6 +94,8 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   final List<String> _tokens = [];
   final List<String> _prevTokens = [];
   final List<AnimatedToken> _animatedTokens = [];
+
+  TextStyle get style => widget.style ?? DefaultTextStyle.of(context).style;
   AnimationController _animationController;
   double _prevTotalHeight = 0;
   double _prevTotalWidth = 0;
@@ -125,7 +146,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   }
 
   Size _getSize(String token) {
-    return getTextWidgetSize(token, widget.style);
+    return getTextWidgetSize(token, style);
   }
 
   void _computeTokens() {
@@ -185,20 +206,34 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     for (final AnimatedToken animatedToken in _animatedTokens.reversed.toList()) {
       Tween<double> newElementTween;
       Tween<double> oldElementTween;
+      Tween<double> opacityTween;
+      Tween<double> opacityTweenOld;
       if (animatedToken.direction == Direction.none) {
         newElementTween = Tween(begin: 0, end: 0);
         oldElementTween = Tween(begin: 0, end: 0);
+        opacityTween = Tween(begin: 1, end: 1);
+        opacityTweenOld = Tween(begin: 1, end: 1);
       }
       if (animatedToken.direction == Direction.bottom) {
         newElementTween = Tween(begin: -_totalHeightTween.end, end: 0);
         oldElementTween = Tween(begin: 0, end: _totalHeightTween.end);
+        opacityTween = Tween(begin: 0, end: 1);
+        opacityTweenOld = Tween(begin: 1, end: 0);
       }
       if (animatedToken.direction == Direction.top) {
         newElementTween = Tween(begin: _totalHeightTween.end, end: 0);
         oldElementTween = Tween(begin: 0, end: -_totalHeightTween.end);
+        opacityTween = Tween(begin: 0, end: 1);
+        opacityTweenOld = Tween(begin: 1, end: 0);
       }
-      animatedToken.axisY = newElementTween.animate(_animationController);
-      animatedToken.axisYOld = oldElementTween.animate(_animationController);
+      final Animation<double> curvedPositionAnimation = CurvedAnimation(curve: widget.positionCurve, parent: _animationController);
+      final Animation<double> curvedOpacityAnimation = CurvedAnimation(curve: widget.opacityToCurve, parent: _animationController);
+      final Animation<double> curvedOpacityAnimationOld = CurvedAnimation(curve: widget.opacityFromCurve, parent: _animationController);
+
+      animatedToken.axisY = newElementTween.animate(curvedPositionAnimation);
+      animatedToken.axisYOld = oldElementTween.animate(curvedPositionAnimation);
+      animatedToken.opacity = opacityTween.animate(curvedOpacityAnimation);
+      animatedToken.opacityOld = opacityTweenOld.animate(curvedOpacityAnimationOld);
       Tween<double> axisXTween = Tween(begin: 0, end: 0);
       if (prevAnimatedToken != null) {
         if (prevAnimatedToken.direction == Direction.none) {
@@ -228,8 +263,15 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     }
   }
 
-  Text _buildToken(String token) {
-    return Text(token, style: widget.style ?? DefaultTextStyle.of(context), maxLines: 1);
+  Widget _buildToken(String token, double opacity) {
+    final Text text = Text(token, style: style, maxLines: 1);
+    if (widget.useOpacity) {
+      return Opacity(
+        opacity: opacity,
+        child: text,
+      );
+    }
+    return text;
   }
 
   List<Widget> _buildSpans() {
@@ -242,7 +284,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
           Positioned(
             bottom: 0,
             right: animatedToken.axisX.value,
-            child: _buildToken(animatedToken.center),
+            child: _buildToken(animatedToken.center, 1),
           ),
         );
       }
@@ -252,7 +294,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
           Positioned(
             bottom: animatedToken.axisYOld.value,
             right: animatedToken.axisX.value,
-            child: _buildToken(animatedToken.center),
+            child: _buildToken(animatedToken.center, animatedToken.opacityOld.value),
           ),
         );
 
@@ -260,7 +302,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
           Positioned(
             bottom: animatedToken.axisY.value,
             right: animatedToken.axisX.value,
-            child: _buildToken(animatedToken.bottom),
+            child: _buildToken(animatedToken.bottom, animatedToken.opacity.value),
           ),
         );
       }
@@ -270,7 +312,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
           Positioned(
             bottom: animatedToken.axisY.value,
             right: animatedToken.axisX.value,
-            child: _buildToken(animatedToken.top),
+            child: _buildToken(animatedToken.top, animatedToken.opacity.value),
           ),
         );
 
@@ -278,7 +320,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
           Positioned(
             bottom: animatedToken.axisYOld.value,
             right: animatedToken.axisX.value,
-            child: _buildToken(animatedToken.center),
+            child: _buildToken(animatedToken.center, animatedToken.opacityOld.value),
           ),
         );
       }

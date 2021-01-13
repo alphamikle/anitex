@@ -48,6 +48,8 @@ class AnimatedToken {
     this.axisYOld,
     this.axisX,
     this.axisXTween,
+    this.opacity,
+    this.opacityOld,
   });
 
   /// | top |
@@ -85,7 +87,16 @@ class AnimatedToken {
 
   /// Animation in X axis for the same letter (old == new)
   Animation<double> axisX;
+
   Tween<double> axisXTween;
+
+  /// If token is Direction.bottom - opacity ween will be from
+  /// If Direction.top - 0 -> 1
+  Animation<double> opacity;
+
+  /// If token is Direction.bottom - opacity ween will be from
+  /// If Direction.top - 0 -> 1
+  Animation<double> opacityOld;
 
   @override
   String toString() => '''AnimatedToken {

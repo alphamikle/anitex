@@ -38,6 +38,4 @@ line, and it is also desirable to explicitly specify the text styles
 
 Video available on YouTube:
 
-<a href="https://www.youtube.com/watch?v=hFkvllYtd9M" target="_blank">
-  <img src="https://github.com/alphamikle/anitex/raw/master/anitex_demo.gif" width="400">
-</a>
+<img src="https://github.com/alphamikle/anitex/raw/master/anitex_demo.gif" width="400">

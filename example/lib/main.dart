@@ -27,152 +27,90 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-const _counters = [
-  19,
-  20,
-  21,
-  22,
-  1375,
-  2184,
-  21849,
-  35410,
-  35411,
-];
-
-const _titles = [
-  'Animated text Demo',
-  'Animated text Demo',
-  'Animated text Demo',
-  'Animated text Demo',
-  'Animated text Demo',
-  'Animated text Demo',
-  'Animated text Demo',
-  'Animated text Demo',
-  'In any place',
-];
-
-const _smallTitles = [
-  'You have pushed the button this many times:',
-  'You have pushed the button this many times:',
-  'You have pushed the button this many times:',
-  'You have pushed the button this many times:',
-  'You have pushed the button this many times:',
-  'You have pushed the button this many times:',
-  'You have pushed the button this many times:',
-  'You can animate any text:',
-  'You can animate any text:',
-];
-
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 18;
-  String _title = 'Animated text Demo';
-  String _smallTitle = 'You have pushed the button this many times:';
-  bool _secondPhase = false;
-  String _secondPhaseTitle = 'This';
-  Duration _secondPhaseDuration = const Duration(milliseconds: 500);
-  TextStyle _secondPhaseTextStyle;
+  int _times = 1;
+  bool _isEnglish = true;
+  bool _isFirstPhase = false;
+  String _storyText;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
+  void _updateTimes() {
+    _times++;
   }
 
   Future<void> _wait(int ms) async {
     await Future.delayed(Duration(milliseconds: ms));
   }
 
-  Future<void> _run() async {
-    await _wait(5000);
-    for (int i = 0; i < _counters.length; i++) {
-      await _wait(Random().nextInt(600) + 400);
-      setState(() {
-        _counter = _counters[i];
-      });
-      if (_counter > 35410) {
-        setState(() {
-          _title = _titles[i];
-        });
-        await _wait(Random().nextInt(600) + 1000);
-        setState(() {
-          _smallTitle = _smallTitles[i];
-        });
-        await _wait(Random().nextInt(600) + 2000);
-      }
-    }
+  void _incrementCounter() {
     setState(() {
-      _secondPhase = true;
-      _title = 'Animated text Demo';
-    });
-    await _wait(1200);
-    setState(() {
-      _secondPhaseTitle = 'is';
-    });
-    await _wait(800);
-    setState(() {
-      _secondPhaseTitle = 'Animated Text';
-    });
-    await _wait(510);
-    setState(() {
-      _secondPhaseDuration = const Duration(milliseconds: 250);
-      _secondPhaseTextStyle = _secondPhaseTextStyle.copyWith(color: Colors.blue);
-    });
-    await _wait(600);
-
-    Future<void> upd(int i, String letter) async {
-      setState(() {
-        _secondPhaseTitle = _secondPhaseTitle.replaceRange(i, i + 1, letter);
-      });
-      int multiplier = (i + 1) * 30;
-      await _wait(300 + multiplier);
-    }
-
-    // Animated text:
-    await upd(0, ' '); // -->  nimated text
-    await upd(0, ''); // --> nimated text
-    await upd(0, ' '); // --> imated text
-    await upd(0, ''); // --> imated text
-    await upd(0, 'A'); // --> Amated text
-    await upd(1, ' '); // --> Aated text
-    await upd(1, ''); // --> Aated text
-    await upd(1, 'n'); // --> ANted text
-    await upd(2, 'i'); // --> ANIed text
-    await upd(3, ' '); // --> ANId text
-    await upd(3, ''); // --> ANId text
-    await upd(3, ' '); // --> ANI text
-    await upd(3, ''); // --> ANI text
-    await upd(3, 't'); // --> ANITtext
-    await upd(4, ' '); // --> ANIText
-    await upd(4, ''); // --> ANIText
-    await upd(4, 'e'); // --> ANITExt
-    await upd(5, ' '); // --> ANITEt
-    await upd(5, ''); // --> ANITEt
-    await upd(5, 'x'); // --> ANITEX
-    await _wait(2000);
-    setState(() {
-      _title = 'Anitex Demo';
-      _secondPhase = false;
+      _counter++;
+      _updateTimes();
     });
   }
 
-  Widget _buildFirstPhase() {
+  void _decrementCounter() {
+    setState(() {
+      _counter--;
+      _updateTimes();
+    });
+  }
+
+  void _randomCounter() {
+    setState(() {
+      _counter = Random().nextInt(10000);
+      _updateTimes();
+    });
+  }
+
+  void _setCounter(int counter) {
+    setState(() {
+      _counter = counter;
+    });
+  }
+
+  Future<void> _run() async {
+    const int delay = 700;
+    await _wait(delay);
+    _incrementCounter();
+    await _wait(delay);
+    _incrementCounter();
+    await _wait(delay);
+    _incrementCounter();
+    await _wait(delay);
+    _incrementCounter();
+    await _wait(delay);
+    _setCounter(90);
+    await _wait(delay);
+    _setCounter(349);
+    await _wait(delay);
+    _setCounter(166);
+    await _wait(delay);
+    _setCounter(939);
+    _randomCounter();
+    await _wait(delay);
+    _randomCounter();
+  }
+
+  Widget _buildFirst() {
+    return AnimatedText(_storyText, style: Theme.of(context).textTheme.headline5, duration: const Duration(seconds: 1), reversed: true);
+  }
+
+  Widget _buildSecond() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         AnimatedText(
-          _smallTitle,
-          duration: const Duration(seconds: 2),
+          _times % 7 == 0 ? 'You can really animate any text:' : 'You can animate any text:',
+          duration: const Duration(milliseconds: 700),
         ),
         AnimatedText(
           '$_counter',
           style: Theme.of(context).textTheme.headline4,
+          useOpacity: true,
+          duration: const Duration(milliseconds: 350),
+          reversed: true,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -183,6 +121,13 @@ class _MyHomePageState extends State<MyHomePage> {
               splashColor: Colors.blue.withOpacity(0.25),
               onPressed: _incrementCounter,
               icon: Icon(Icons.add),
+            ),
+            IconButton(
+              color: Colors.green,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.blue.withOpacity(0.25),
+              onPressed: _randomCounter,
+              icon: Icon(Icons.refresh),
             ),
             IconButton(
               color: Colors.red,
@@ -197,37 +142,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildSecondPhase() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 500),
-          maxLines: 1,
-          style: _secondPhaseTextStyle,
-          child: Builder(
-            builder: (BuildContext context) => AnimatedText(
-              _secondPhaseTitle,
-              duration: _secondPhaseDuration,
-              style: DefaultTextStyle.of(context).style,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    assert(_counters.length == _titles.length && _counters.length == _smallTitles.length);
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _secondPhaseTextStyle = Theme.of(context).textTheme.headline4;
     _run();
   }
 
@@ -236,16 +153,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: AnimatedText(
-          _title,
-          style: Theme.of(context).textTheme.headline6.copyWith(color: Colors.white),
-          duration: const Duration(seconds: 1),
-          reversed: true,
+          _times % 7 == 0 ? 'Any text' : 'Anitex demo',
+          duration: const Duration(milliseconds: 700),
         ),
       ),
       body: Center(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          child: _secondPhase ? _buildSecondPhase() : _buildFirstPhase(),
+          child: _isFirstPhase ? _buildFirst() : _buildSecond(),
         ),
       ),
     );
