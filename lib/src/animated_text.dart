@@ -42,6 +42,7 @@ class AnimatedText extends StatefulWidget {
     this.positionCurve = Curves.decelerate,
     this.opacityToCurve = Curves.easeInQuart,
     this.opacityFromCurve = Curves.easeOutQuart,
+    this.textAlign = TextAlign.left,
     this.useOpacity = true,
   })  : assert(duration != null),
         assert(text != null),
@@ -84,6 +85,9 @@ class AnimatedText extends StatefulWidget {
   /// Use opacity while tokens switching
   final bool useOpacity;
 
+  /// Text align for not animated widget
+  final TextAlign textAlign;
+
   @override
   _AnimatedTextState createState() {
     return _AnimatedTextState();
@@ -101,6 +105,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   double _prevTotalWidth = 0;
   Tween<double> _totalWidthTween = Tween(begin: 0, end: 0);
   Tween<double> _totalHeightTween = Tween(begin: 0, end: 0);
+  bool _wasChanged = false;
 
   Map<int, Direction> get _directions => {
         -1: widget.reversed ? Direction.top : Direction.bottom,
@@ -332,9 +337,39 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     _animationController.forward(from: 0);
   }
 
+  Alignment _getStackAlignment() {
+    switch (widget.textAlign) {
+      case TextAlign.start:
+        {
+          return Alignment.centerLeft;
+        }
+      case TextAlign.center:
+        {
+          return Alignment.center;
+        }
+      case TextAlign.right:
+        {
+          return Alignment.centerRight;
+        }
+      case TextAlign.left:
+        {
+          return Alignment.centerLeft;
+        }
+      case TextAlign.end:
+        {
+          return Alignment.centerRight;
+        }
+      default:
+        {
+          throw Exception('${widget.textAlign} not allowed to use in $AnimatedText widget');
+        }
+    }
+  }
+
   @override
   void didUpdateWidget(AnimatedText oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _wasChanged = true;
     _initTokens();
   }
 
@@ -355,17 +390,33 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (BuildContext context, Widget child) {
-        return SizedBox(
-          height: _totalHeightTween.animate(_animationController).value,
-          width: _totalWidthTween.animate(_animationController).value,
-          child: Stack(
-            children: _buildSpans(),
-          ),
-        );
-      },
-    );
+    return _wasChanged
+        ? AnimatedBuilder(
+            animation: _animationController,
+            builder: (BuildContext context, Widget child) {
+              return SizedBox(
+                height: _totalHeightTween.animate(_animationController).value,
+                width: _totalWidthTween.animate(_animationController).value,
+                child: Stack(
+                  children: _buildSpans(),
+                ),
+              );
+            },
+          )
+        : SizedBox(
+            height: _getSize(widget.text).height,
+            width: _getSize(widget.text).width,
+            child: Stack(
+              alignment: _getStackAlignment(),
+              children: [
+                Text(
+                  widget.text,
+                  style: widget.style,
+                  maxLines: 1,
+                  textAlign: widget.textAlign,
+                ),
+              ],
+            ),
+          );
   }
 }
