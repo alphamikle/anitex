@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -30,9 +30,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 18;
   int _times = 1;
-  bool _isEnglish = true;
-  bool _isFirstPhase = false;
-  String _storyText;
 
   void _updateTimes() {
     _times++;
@@ -92,11 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _randomCounter();
   }
 
-  Widget _buildFirst() {
-    return AnimatedText(_storyText, style: Theme.of(context).textTheme.headline5, duration: const Duration(seconds: 1), reversed: true);
-  }
-
-  Widget _buildSecond() {
+  Widget _buildAnimation() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -160,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          child: _isFirstPhase ? _buildFirst() : _buildSecond(),
+          child: _buildAnimation(),
         ),
       ),
     );

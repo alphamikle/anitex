@@ -35,8 +35,8 @@ Size getTextWidgetSize(String text, TextStyle style, {double minWidth = 0, doubl
 }
 
 extension TryToGetElement on Iterable {
-  T tryElementAt<T>(int index) {
-    T value;
+  T? tryElementAt<T>(int index) {
+    T? value;
     try {
       value = elementAt(index);
     } catch (err) {

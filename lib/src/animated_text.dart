@@ -35,7 +35,7 @@ import 'utils.dart';
 class AnimatedText extends StatefulWidget {
   const AnimatedText(
     this.text, {
-    Key key,
+    Key? key,
     this.style,
     this.duration = const Duration(milliseconds: 350),
     this.reversed = false,
@@ -44,10 +44,7 @@ class AnimatedText extends StatefulWidget {
     this.opacityFromCurve = Curves.easeOutQuart,
     this.textAlign = TextAlign.left,
     this.useOpacity = true,
-  })  : assert(duration != null),
-        assert(text != null),
-        assert(positionCurve != null && opacityFromCurve != null && opacityToCurve != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// Text, which will we printed
   final String text;
@@ -56,7 +53,7 @@ class AnimatedText extends StatefulWidget {
   /// If the style's "inherit" property is true, the style will be merged with
   /// the closest enclosing [DefaultTextStyle]. Otherwise, the style will
   /// replace the closest enclosing [DefaultTextStyle].
-  final TextStyle style;
+  final TextStyle? style;
 
   /// The duration over which to animate the parameters of this container.
   final Duration duration;
@@ -100,7 +97,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   final List<AnimatedToken> _animatedTokens = [];
 
   TextStyle get style => widget.style ?? DefaultTextStyle.of(context).style;
-  AnimationController _animationController;
+  late AnimationController _animationController;
   double _prevTotalHeight = 0;
   double _prevTotalWidth = 0;
   Tween<double> _totalWidthTween = Tween(begin: 0, end: 0);
@@ -129,7 +126,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     double totalWidth = 0;
     for (final AnimatedToken animatedToken in _animatedTokens) {
       final double maxHeight = max(max(animatedToken.topSize.height, animatedToken.centerSize.height), animatedToken.bottomSize.height);
-      double maxWidth;
+      double maxWidth = 0;
       if (animatedToken.direction == Direction.none) {
         maxWidth = animatedToken.centerSize.width;
       }
@@ -161,13 +158,13 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     for (int i = 0; i < longestTokens.length; i++) {
       final String token = _tokens.tryElementAt(i) ?? '';
       final String prevToken = _prevTokens.tryElementAt(i) ?? '';
-      final Direction direction = _directions[token.compareTo(prevToken)];
-      String top;
-      String center;
-      String bottom;
-      Size topSize;
-      Size centerSize;
-      Size bottomSize;
+      final Direction direction = _directions[token.compareTo(prevToken)]!;
+      String top = '';
+      String center = '';
+      String bottom = '';
+      Size topSize = Size.zero;
+      Size centerSize = Size.zero;
+      Size bottomSize = Size.zero;
 
       /// Not empty strings replaces by '', when [shorterToLonger == false]
       if (direction == Direction.bottom) {
@@ -207,12 +204,12 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   }
 
   void _computeAnimations() {
-    AnimatedToken prevAnimatedToken;
+    AnimatedToken? prevAnimatedToken;
     for (final AnimatedToken animatedToken in _animatedTokens.reversed.toList()) {
-      Tween<double> newElementTween;
-      Tween<double> oldElementTween;
-      Tween<double> opacityTween;
-      Tween<double> opacityTweenOld;
+      late Tween<double> newElementTween;
+      late Tween<double> oldElementTween;
+      late Tween<double> opacityTween;
+      late Tween<double> opacityTweenOld;
       if (animatedToken.direction == Direction.none) {
         newElementTween = Tween(begin: 0, end: 0);
         oldElementTween = Tween(begin: 0, end: 0);
@@ -220,14 +217,14 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
         opacityTweenOld = Tween(begin: 1, end: 1);
       }
       if (animatedToken.direction == Direction.bottom) {
-        newElementTween = Tween(begin: -_totalHeightTween.end, end: 0);
+        newElementTween = Tween(begin: -_totalHeightTween.end!, end: 0);
         oldElementTween = Tween(begin: 0, end: _totalHeightTween.end);
         opacityTween = Tween(begin: 0, end: 1);
         opacityTweenOld = Tween(begin: 1, end: 0);
       }
       if (animatedToken.direction == Direction.top) {
         newElementTween = Tween(begin: _totalHeightTween.end, end: 0);
-        oldElementTween = Tween(begin: 0, end: -_totalHeightTween.end);
+        oldElementTween = Tween(begin: 0, end: -_totalHeightTween.end!);
         opacityTween = Tween(begin: 0, end: 1);
         opacityTweenOld = Tween(begin: 1, end: 0);
       }
@@ -243,22 +240,22 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
       if (prevAnimatedToken != null) {
         if (prevAnimatedToken.direction == Direction.none) {
           axisXTween = Tween(
-            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin,
-            end: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.end,
+            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin!,
+            end: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.end!,
           );
         }
 
         if (prevAnimatedToken.direction == Direction.bottom) {
           axisXTween = Tween(
-            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin,
-            end: prevAnimatedToken.topSize.width + prevAnimatedToken.axisXTween.end,
+            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin!,
+            end: prevAnimatedToken.topSize.width + prevAnimatedToken.axisXTween.end!,
           );
         }
 
         if (prevAnimatedToken.direction == Direction.top) {
           axisXTween = Tween(
-            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin,
-            end: prevAnimatedToken.bottomSize.width + prevAnimatedToken.axisXTween.end,
+            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin!,
+            end: prevAnimatedToken.bottomSize.width + prevAnimatedToken.axisXTween.end!,
           );
         }
       }
@@ -334,7 +331,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   }
 
   Future<void> _runAnimations() async {
-    _animationController.forward(from: 0);
+    await _animationController.forward(from: 0);
   }
 
   Alignment _getStackAlignment() {
@@ -377,7 +374,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this, animationBehavior: AnimationBehavior.preserve, duration: widget.duration);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       _initTokens();
     });
   }
@@ -393,7 +390,7 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     return _wasChanged
         ? AnimatedBuilder(
             animation: _animationController,
-            builder: (BuildContext context, Widget child) {
+            builder: (BuildContext context, Widget? child) {
               return SizedBox(
                 height: _totalHeightTween.animate(_animationController).value,
                 width: _totalWidthTween.animate(_animationController).value,

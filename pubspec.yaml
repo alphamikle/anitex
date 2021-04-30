@@ -1,21 +1,20 @@
 name: anitex
 description: Anitex is a implicitly animated text widget, which animates on passed text changes
-version: 1.2.0
-
+version: 2.0.0
 repository: https://github.com/alphamikle/anitex
 homepage: https://github.com/alphamikle/anitex
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.17.0 <2.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  pedantic: ^1.9.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  pedantic: ^1.11.0
 
 flutter:
