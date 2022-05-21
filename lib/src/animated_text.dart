@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Mikhail Alpha <alphamikle@gmail.com>
+ * Copyright (c) 2020 Mikhail Alfa <alphamikle@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -15,7 +15,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -23,7 +23,6 @@
  */
 
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
@@ -58,8 +57,8 @@ class AnimatedText extends StatefulWidget {
   /// The duration over which to animate the parameters of this container.
   final Duration duration;
 
-  /// If [reversed] is true, then letter, which was greater in [letter.compareTo(oldLetter)]
-  /// will be at bottom, if false - at top.
+  /// If [reversed] is true, then letter, which was greater in
+  /// [letter.compareTo(oldLetter)] will be at bottom, if false - at top.
   /// [reversed] is false
   /// 0       _
   /// 1   ->  0
@@ -73,10 +72,12 @@ class AnimatedText extends StatefulWidget {
   /// Curve, which describes how is switching a tokens in the words
   final Curve positionCurve;
 
-  /// Curve, which describes how is changing opacity of new tokens on their switching
+  /// Curve, which describes how is changing opacity of new tokens on
+  /// their switching
   final Curve opacityToCurve;
 
-  /// Curve, which describes how is changing opacity of old tokens on their switching
+  /// Curve, which describes how is changing opacity of old tokens on
+  /// their switching
   final Curve opacityFromCurve;
 
   /// Use opacity while tokens switching
@@ -86,12 +87,13 @@ class AnimatedText extends StatefulWidget {
   final TextAlign textAlign;
 
   @override
-  _AnimatedTextState createState() {
-    return _AnimatedTextState();
+  AnimatedTextState createState() {
+    return AnimatedTextState();
   }
 }
 
-class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMixin {
+class AnimatedTextState extends State<AnimatedText>
+    with TickerProviderStateMixin {
   final List<String> _tokens = [];
   final List<String> _prevTokens = [];
   final List<AnimatedToken> _animatedTokens = [];
@@ -125,7 +127,9 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     double totalHeight = 0;
     double totalWidth = 0;
     for (final AnimatedToken animatedToken in _animatedTokens) {
-      final double maxHeight = max(max(animatedToken.topSize.height, animatedToken.centerSize.height), animatedToken.bottomSize.height);
+      final double maxHeight = max(
+          max(animatedToken.topSize.height, animatedToken.centerSize.height),
+          animatedToken.bottomSize.height);
       double maxWidth = 0;
       if (animatedToken.direction == Direction.none) {
         maxWidth = animatedToken.centerSize.width;
@@ -205,7 +209,8 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
 
   void _computeAnimations() {
     AnimatedToken? prevAnimatedToken;
-    for (final AnimatedToken animatedToken in _animatedTokens.reversed.toList()) {
+    for (final AnimatedToken animatedToken
+        in _animatedTokens.reversed.toList()) {
       late Tween<double> newElementTween;
       late Tween<double> oldElementTween;
       late Tween<double> opacityTween;
@@ -228,34 +233,44 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
         opacityTween = Tween(begin: 0, end: 1);
         opacityTweenOld = Tween(begin: 1, end: 0);
       }
-      final Animation<double> curvedPositionAnimation = CurvedAnimation(curve: widget.positionCurve, parent: _animationController);
-      final Animation<double> curvedOpacityAnimation = CurvedAnimation(curve: widget.opacityToCurve, parent: _animationController);
-      final Animation<double> curvedOpacityAnimationOld = CurvedAnimation(curve: widget.opacityFromCurve, parent: _animationController);
+      final Animation<double> curvedPositionAnimation = CurvedAnimation(
+          curve: widget.positionCurve, parent: _animationController);
+      final Animation<double> curvedOpacityAnimation = CurvedAnimation(
+          curve: widget.opacityToCurve, parent: _animationController);
+      final Animation<double> curvedOpacityAnimationOld = CurvedAnimation(
+          curve: widget.opacityFromCurve, parent: _animationController);
 
       animatedToken.axisY = newElementTween.animate(curvedPositionAnimation);
       animatedToken.axisYOld = oldElementTween.animate(curvedPositionAnimation);
       animatedToken.opacity = opacityTween.animate(curvedOpacityAnimation);
-      animatedToken.opacityOld = opacityTweenOld.animate(curvedOpacityAnimationOld);
+      animatedToken.opacityOld =
+          opacityTweenOld.animate(curvedOpacityAnimationOld);
       Tween<double> axisXTween = Tween(begin: 0, end: 0);
       if (prevAnimatedToken != null) {
         if (prevAnimatedToken.direction == Direction.none) {
           axisXTween = Tween(
-            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin!,
-            end: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.end!,
+            begin: prevAnimatedToken.centerSize.width +
+                prevAnimatedToken.axisXTween.begin!,
+            end: prevAnimatedToken.centerSize.width +
+                prevAnimatedToken.axisXTween.end!,
           );
         }
 
         if (prevAnimatedToken.direction == Direction.bottom) {
           axisXTween = Tween(
-            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin!,
-            end: prevAnimatedToken.topSize.width + prevAnimatedToken.axisXTween.end!,
+            begin: prevAnimatedToken.centerSize.width +
+                prevAnimatedToken.axisXTween.begin!,
+            end: prevAnimatedToken.topSize.width +
+                prevAnimatedToken.axisXTween.end!,
           );
         }
 
         if (prevAnimatedToken.direction == Direction.top) {
           axisXTween = Tween(
-            begin: prevAnimatedToken.centerSize.width + prevAnimatedToken.axisXTween.begin!,
-            end: prevAnimatedToken.bottomSize.width + prevAnimatedToken.axisXTween.end!,
+            begin: prevAnimatedToken.centerSize.width +
+                prevAnimatedToken.axisXTween.begin!,
+            end: prevAnimatedToken.bottomSize.width +
+                prevAnimatedToken.axisXTween.end!,
           );
         }
       }
@@ -280,7 +295,8 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
     final List<Widget> topRow = [];
     final List<Widget> centerRow = [];
     final List<Widget> bottomRow = [];
-    for (final AnimatedToken animatedToken in _animatedTokens.reversed.toList()) {
+    for (final AnimatedToken animatedToken
+        in _animatedTokens.reversed.toList()) {
       if (animatedToken.direction == Direction.none) {
         centerRow.add(
           Positioned(
@@ -296,7 +312,8 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
           Positioned(
             bottom: animatedToken.axisYOld.value,
             right: animatedToken.axisX.value,
-            child: _buildToken(animatedToken.center, animatedToken.opacityOld.value),
+            child: _buildToken(
+                animatedToken.center, animatedToken.opacityOld.value),
           ),
         );
 
@@ -304,7 +321,8 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
           Positioned(
             bottom: animatedToken.axisY.value,
             right: animatedToken.axisX.value,
-            child: _buildToken(animatedToken.bottom, animatedToken.opacity.value),
+            child:
+                _buildToken(animatedToken.bottom, animatedToken.opacity.value),
           ),
         );
       }
@@ -322,7 +340,8 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
           Positioned(
             bottom: animatedToken.axisYOld.value,
             right: animatedToken.axisX.value,
-            child: _buildToken(animatedToken.center, animatedToken.opacityOld.value),
+            child: _buildToken(
+                animatedToken.center, animatedToken.opacityOld.value),
           ),
         );
       }
@@ -358,7 +377,8 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
         }
       default:
         {
-          throw Exception('${widget.textAlign} not allowed to use in $AnimatedText widget');
+          throw Exception(
+              '${widget.textAlign} not allowed to use in $AnimatedText widget');
         }
     }
   }
@@ -373,8 +393,11 @@ class _AnimatedTextState extends State<AnimatedText> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, animationBehavior: AnimationBehavior.preserve, duration: widget.duration);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    _animationController = AnimationController(
+        vsync: this,
+        animationBehavior: AnimationBehavior.preserve,
+        duration: widget.duration);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _initTokens();
     });
   }

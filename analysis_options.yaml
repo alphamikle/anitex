@@ -1,5 +1,5 @@
-include: package:pedantic/analysis_options.yaml
+include: package:flutter_lints/flutter.yaml
 
-linter:
-  rules:
-    omit_local_variable_types: false
+#linter:
+#  rules:
+#    omit_local_variable_types: false
