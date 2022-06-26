@@ -1,15 +1,7 @@
-## Anitex
-
-Animated text widget package for flutter
+## <span style="color:#3892fa">Ani</span>mated<span style="color:#3892fa">Tex</span>tWidget
 
 ### Getting started
-Anitex - is a simple package, which give you possibility to implicitly
-animate any text. The most impressive animation is achieve if the old
-and new lines are the same length, or don't differ too much in length.
-
-The widget has a limitation - it is possible to write text in only one 
-line, and it is also desirable to explicitly specify the text styles
-(you can get textStyle from context and pass it to `AnimatedText`).
+**Anitex** - is a simple package, which give you access to implicitly animate any text. The most impressive animation is achieve if the old and new lines are the same length, or don't differ too much in length.
 
 
 #### Example of usage:
@@ -20,7 +12,7 @@ line, and it is also desirable to explicitly specify the text styles
     return Scaffold(
       appBar: AppBar(
         title: AnimatedText(
-          title,
+          title, // This is just a [String]
           style: Theme.of(context).textTheme.headline6.copyWith(color: Colors.white),
           duration: const Duration(seconds: 1),
         ),
@@ -28,14 +20,11 @@ line, and it is also desirable to explicitly specify the text styles
       body: Center(
         child: AnimatedText(
           content,
-          style: Theme.of(context).textTheme.headline6.copyWith(color: Colors.white),
           reversed: true,
         ),
       ),
     );
   }
 ```
-
-Video available on YouTube:
 
 <img src="https://github.com/alphamikle/anitex/raw/master/demo.gif" width="400">
