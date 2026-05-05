@@ -43,6 +43,7 @@ class AnimatedText extends StatefulWidget {
     this.opacityFromCurve = Curves.easeOutQuart,
     this.textAlign = TextAlign.left,
     this.useOpacity = true,
+    this.monoWidth,
   }) : super(key: key);
 
   /// Text, which will we printed
@@ -86,6 +87,9 @@ class AnimatedText extends StatefulWidget {
   /// Text align for not animated widget
   final TextAlign textAlign;
 
+  /// Explicit width of every letter
+  final double? monoWidth;
+
   @override
   AnimatedTextState createState() {
     return AnimatedTextState();
@@ -128,8 +132,9 @@ class AnimatedTextState extends State<AnimatedText>
     double totalWidth = 0;
     for (final AnimatedToken animatedToken in _animatedTokens) {
       final double maxHeight = max(
-          max(animatedToken.topSize.height, animatedToken.centerSize.height),
-          animatedToken.bottomSize.height);
+        max(animatedToken.topSize.height, animatedToken.centerSize.height),
+        animatedToken.bottomSize.height,
+      );
       double maxWidth = 0;
       if (animatedToken.direction == Direction.none) {
         maxWidth = animatedToken.centerSize.width;
